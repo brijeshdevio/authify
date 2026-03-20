@@ -1,0 +1,9 @@
+@BASE_URL=http://localhost:3000
+
+
+### Root welcome route
+GET {{BASE_URL}}/
+
+
+### Health check route
+GET {{BASE_URL}}/health
