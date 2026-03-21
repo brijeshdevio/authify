@@ -7,3 +7,116 @@ GET {{BASE_URL}}/
 
 ### Health check route
 GET {{BASE_URL}}/health
+
+
+### ──────────────────────────────────────────────
+###  AUTH FLOW (execute in order)
+### ──────────────────────────────────────────────
+
+
+### 1. Register a new user
+# Creates account only — does NOT log in. Must login separately.
+POST {{BASE_URL}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Jonson Carter",
+  "email": "jonson@duck.com",
+  "password": "securePass123"
+}
+
+
+### 2. Login user
+# Sets httpOnly cookies: accessToken (15m) + refreshToken (7d)
+# No tokens in response body — they live only in cookies.
+POST {{BASE_URL}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "jonson@duck.com",
+  "password": "securePass123"
+}
+
+
+### 3. Refresh token
+# Browser auto-sends refreshToken cookie → gets new cookie pair
+POST {{BASE_URL}}/api/auth/refresh
+
+
+### 4. Get all active sessions (multi-device)
+# accessToken cookie sent automatically
+GET {{BASE_URL}}/api/auth/sessions
+
+
+### 5. Revoke a specific session
+# Replace <session-id> with an ID from the sessions list
+DELETE {{BASE_URL}}/api/auth/sessions/cmn0109q90002ivcpwkq7gqh2
+
+
+### 6. Logout
+# Deletes session in DB + clears both auth cookies
+POST {{BASE_URL}}/api/auth/logout
+
+
+### ──────────────────────────────────────────────
+###  USER PROFILE (requires login first)
+### ──────────────────────────────────────────────
+
+
+### Get own profile
+GET {{BASE_URL}}/api/user/me
+
+
+### Change name
+PATCH {{BASE_URL}}/api/user/me/name
+Content-Type: application/json
+
+{
+  "name": "Jonson Updated"
+}
+
+
+### Change password
+PATCH {{BASE_URL}}/api/user/me/password
+Content-Type: application/json
+
+{
+  "currentPassword": "securePass123",
+  "newPassword": "newSecurePass456"
+}
+
+
+### ──────────────────────────────────────────────
+###  ERROR CASES
+### ──────────────────────────────────────────────
+
+
+### Signup with duplicate email (expect 409)
+POST {{BASE_URL}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Duplicate User",
+  "email": "jonson@duck.com",
+  "password": "securePass123"
+}
+
+
+### Login with wrong password (expect 401)
+POST {{BASE_URL}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "jonson@duck.com",
+  "password": "wrongpassword"
+}
+
+
+### Signup with invalid data (expect 400)
+POST {{BASE_URL}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "short"
+}
