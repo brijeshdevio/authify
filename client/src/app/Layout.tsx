@@ -68,6 +68,7 @@ export function DashboardLayout() {
     <>
       <Navbar />
       <Outlet />
+      <Footer />
     </>
   )
 }
