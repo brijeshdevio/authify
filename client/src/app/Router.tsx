@@ -6,6 +6,9 @@ const Home = lazy(() => import("@/features/public/pages/Home"))
 const NotFound = lazy(() => import("@/features/public/pages/NotFound"))
 const Register = lazy(() => import("@/features/auth/pages/Register"))
 const Login = lazy(() => import("@/features/auth/pages/Login"))
+const EmailVerification = lazy(
+  () => import("@/features/auth/pages/EmailVerification")
+)
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"))
 const Session = lazy(() => import("@/features/dashboard/pages/Session"))
 const Setting = lazy(() => import("@/features/dashboard/pages/Setting"))
@@ -17,6 +20,7 @@ export function AppRoutes() {
         <Route element={<AuthLayout />}>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/email-verification" element={<EmailVerification />} />
         </Route>
 
         <Route element={<DashboardLayout />}>
