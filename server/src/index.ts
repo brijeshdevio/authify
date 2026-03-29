@@ -1,5 +1,6 @@
 import { env } from "./config/env";
 import app from "./app";
+import "./lib/mailer";
 
 const isDevelopment = env.NODE_ENV === "development";
 if (isDevelopment) {
