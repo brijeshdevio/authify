@@ -12,6 +12,7 @@ const EmailVerification = lazy(
 const ForgotPassword = lazy(
   () => import("@/features/auth/pages/ForgotPassword")
 )
+const ResetPassword = lazy(() => import("@/features/auth/pages/ResetPassword"))
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"))
 const Session = lazy(() => import("@/features/dashboard/pages/Session"))
 const Setting = lazy(() => import("@/features/dashboard/pages/Setting"))
@@ -25,6 +26,7 @@ export function AppRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/email-verification" element={<EmailVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         <Route element={<DashboardLayout />}>
