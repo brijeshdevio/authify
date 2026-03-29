@@ -1,30 +1,46 @@
 import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
-import { errorHandler } from "./middleware/errorHandler";
-import { sendSuccess } from "./lib/response";
+import helmet from "helmet";
+import { env } from "./config/env";
+import { routes } from "./routes";
+import { appErrorMiddleware } from "./middleware/appError.middleware";
+import { apiResponse } from "./utils/apiResponse";
+import { ERROR_CODES } from "./constants/errorCodes";
 
 const app = express();
 
-// ─── Core Middleware ────────────────────────────────────────
-app.use(express.json({ limit: "16kb" })); // Prevent large payload abuse
+app.use(
+  cors({
+    origin: env.FRONTEND,
+  }),
+);
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ─── Health Check ───────────────────────────────────────────
-app.get("/", (_req, res) => {
-  sendSuccess(res, 200, { service: "authify" });
+app.get("/", (_, res) => {
+  res.send("Welcome to Authify API!");
 });
 
-app.get("/health", (_req, res) => {
-  sendSuccess(res, 200, { uptime: process.uptime() });
+app.get("/health", (_, res) => {
+  res.send("OK");
 });
 
-// ─── API Routes ─────────────────────────────────────────────
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api", routes);
 
-// ─── Global Error Handler (must be last) ────────────────────
-app.use(errorHandler);
+app.use("", (_, res) => {
+  return apiResponse(res, {
+    status: 404,
+    message: "Route not found",
+    error: {
+      code: ERROR_CODES.NOT_FOUND,
+      details: `Please check the route name and method.`,
+    },
+  });
+});
+
+app.use(appErrorMiddleware);
 
 export default app;

@@ -1,122 +1,72 @@
-@BASE_URL=http://localhost:3000
+@BASE_URL = http://localhost:3000
 
 
-### Root welcome route
+### Get API Root Info
 GET {{BASE_URL}}/
 
 
-### Health check route
+### Health Check
 GET {{BASE_URL}}/health
 
 
-### ──────────────────────────────────────────────
-###  AUTH FLOW (execute in order)
-### ──────────────────────────────────────────────
-
-
-### 1. Register a new user
-# Creates account only — does NOT log in. Must login separately.
-POST {{BASE_URL}}/api/auth/signup
+### Register a new user
+POST {{BASE_URL}}/api/auth/register
 Content-Type: application/json
 
 {
-  "name": "Jonson Carter",
-  "email": "jonson@duck.com",
-  "password": "securePass123"
+  "name": "Jonson Carter",        // string (required) - full name of the user
+  "email": "jonson@duck.com",     // string (required) - must be unique & valid email
+  "password": "123456789"         // string (required) - min length recommended (e.g. 8+)
 }
 
-
-### 2. Login user
-# Sets httpOnly cookies: accessToken (15m) + refreshToken (7d)
-# No tokens in response body — they live only in cookies.
+### Login user
 POST {{BASE_URL}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "jonson@duck.com",
-  "password": "securePass123"
+  "email": "jonson@duck.com",     // string (required) - registered email
+  "password": "123456789"         // string (required) - user password
 }
 
 
-### 3. Refresh token
-# Browser auto-sends refreshToken cookie → gets new cookie pair
-POST {{BASE_URL}}/api/auth/refresh
+### Change user password
+PATCH {{BASE_URL}}/api/auth/change-password
+Content-Type: application/json
+
+{
+  "oldPassword": "123456789",     // string (required) - current password
+  "newPassword": "newStrongPass"  // string (required) - new password
+}
 
 
-### 4. Get all active sessions (multi-device)
-# accessToken cookie sent automatically
-GET {{BASE_URL}}/api/auth/sessions
-
-
-### 5. Revoke a specific session
-# Replace <session-id> with an ID from the sessions list
-DELETE {{BASE_URL}}/api/auth/sessions/cmn0109q90002ivcpwkq7gqh2
-
-
-### 6. Logout
-# Deletes session in DB + clears both auth cookies
+### Logout user
 POST {{BASE_URL}}/api/auth/logout
 
 
-### ──────────────────────────────────────────────
-###  USER PROFILE (requires login first)
-### ──────────────────────────────────────────────
+### Refresh access token
+POST {{BASE_URL}}/api/auth/refresh
 
 
-### Get own profile
-GET {{BASE_URL}}/api/user/me
+### Get current user profile
+GET {{BASE_URL}}/api/users/me
 
 
-### Change name
-PATCH {{BASE_URL}}/api/user/me/name
+### Update current user profile
+PATCH {{BASE_URL}}/api/users/me
 Content-Type: application/json
 
 {
-  "name": "Jonson Updated"
+  "name": "Jonson Carter"   // string (optional) - updated name
 }
 
 
-### Change password
-PATCH {{BASE_URL}}/api/user/me/password
-Content-Type: application/json
-
-{
-  "currentPassword": "securePass123",
-  "newPassword": "newSecurePass456"
-}
+### Get all user sessions
+GET {{BASE_URL}}/api/users/sessions
 
 
-### ──────────────────────────────────────────────
-###  ERROR CASES
-### ──────────────────────────────────────────────
+### Get session by ID
+GET {{BASE_URL}}/api/users/sessions/cmnee50790000bkcph9dx8znk
 
 
-### Signup with duplicate email (expect 409)
-POST {{BASE_URL}}/api/auth/signup
-Content-Type: application/json
-
-{
-  "name": "Duplicate User",
-  "email": "jonson@duck.com",
-  "password": "securePass123"
-}
-
-
-### Login with wrong password (expect 401)
-POST {{BASE_URL}}/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "jonson@duck.com",
-  "password": "wrongpassword"
-}
-
-
-### Signup with invalid data (expect 400)
-POST {{BASE_URL}}/api/auth/signup
-Content-Type: application/json
-
-{
-  "email": "not-an-email",
-  "password": "short"
-}
+### Not found endpoint
+GET {{BASE_URL}}/x
