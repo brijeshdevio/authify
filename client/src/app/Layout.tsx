@@ -1,6 +1,8 @@
-import { Link, Outlet } from "react-router-dom"
+import { Link, Navigate, Outlet } from "react-router-dom"
 import { Navbar } from "@/components/layouts/Navbar"
 import { Footer } from "@/components/layouts/Footer"
+import { useAuth } from "@/hooks/useAuth"
+import { Loader } from "@/components/ui/loader"
 
 export function PublicLayout() {
   return (
@@ -15,6 +17,11 @@ export function PublicLayout() {
 }
 
 export function AuthLayout() {
+  const { user, isLoading, isAuthenticated } = useAuth()
+
+  if (isLoading) return <Loader className="h-screen" />
+  if (user && isAuthenticated) return <Navigate to="/dashboard" replace />
+
   return (
     <>
       <div className="relative flex min-h-screen flex-col bg-[#f8f9fc]">
@@ -64,6 +71,11 @@ export function AuthLayout() {
 }
 
 export function DashboardLayout() {
+  const { user, isLoading, isAuthenticated } = useAuth()
+
+  if (isLoading) return <Loader className="h-screen" />
+  if (!user && !isAuthenticated) return <Navigate to="/login" />
+
   return (
     <>
       <Navbar />
