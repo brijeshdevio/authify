@@ -15,6 +15,7 @@ import {
   ACTIVE_SESSIONS,
   type DeviceType,
 } from "../constants"
+import { useAuth } from "@/hooks/useAuth"
 
 function DeviceIcon({ type }: { type: DeviceType }) {
   switch (type) {
@@ -32,6 +33,8 @@ function DeviceIcon({ type }: { type: DeviceType }) {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth()
+
   return (
     <div className="min-h-screen bg-[#f8f9fc]">
       {/* ─── Header ───────────────────────────────────────────── */}
@@ -70,10 +73,8 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <h2 className="text-xl font-bold text-slate-900">
-                {USER_PROFILE.name}
-              </h2>
-              <p className="text-sm text-slate-500">{USER_PROFILE.email}</p>
+              <h2 className="text-xl font-bold text-slate-900">{user?.name}</h2>
+              <p className="text-sm text-slate-500">{user?.email}</p>
 
               <div className="mt-8 flex w-full justify-between border-t border-slate-100 pt-6">
                 <div className="flex flex-col items-center">

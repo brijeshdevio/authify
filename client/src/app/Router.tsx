@@ -31,8 +31,8 @@ export function AppRoutes() {
 
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/session" element={<Session />} />
-          <Route path="/setting" element={<Setting />} />
+          <Route path="/sessions" element={<Session />} />
+          <Route path="/settings" element={<Setting />} />
         </Route>
 
         <Route element={<PublicLayout />}>
