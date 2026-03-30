@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { env } from "../config/env";
 
-export const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
@@ -17,3 +17,14 @@ try {
 } catch (err) {
   console.error(`❌ Mailer is not ready to send emails: ${err}`);
 }
+
+export const sendEmail = async (to: string, subject: string, html: string) => {
+  const res = await transporter.sendMail({
+    from: `"Authify " <${env.EMAIL_USERNAME}>`,
+    to,
+    subject,
+    html,
+  });
+
+  return res.messageId;
+};

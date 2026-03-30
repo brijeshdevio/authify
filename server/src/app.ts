@@ -13,6 +13,7 @@ const app = express();
 app.use(
   cors({
     origin: env.FRONTEND,
+    credentials: true,
   }),
 );
 app.use(helmet());
