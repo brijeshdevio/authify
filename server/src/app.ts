@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import { UAParser } from "ua-parser-js";
 import { env } from "./config/env";
 import { routes } from "./routes";
 import { appErrorMiddleware } from "./middleware/appError.middleware";
@@ -21,8 +22,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/", (_, res) => {
-  res.send("Welcome to Authify API!");
+app.get("/", (req, res) => {
+  const parser = new UAParser(req.headers["user-agent"]);
+  const device = parser.getDevice();
+  const os = parser.getOS();
+  const browser = parser.getBrowser();
+
+  let type = "laptop"; // default
+
+  if (device.type === "mobile") type = "phone";
+  else if (device.type === "tablet") type = "tablet";
+
+  const deviceName = `${os.name || "Unknown OS"} - ${browser.name || "Unknown Browser"}`;
+
+  res.json({
+    ipAddress: req.ip,
+    userAgent: req.headers["user-agent"],
+    deviceName,
+    type,
+    device,
+    os,
+    browser,
+  });
 });
 
 app.get("/health", (_, res) => {

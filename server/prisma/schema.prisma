@@ -35,8 +35,10 @@ model Session {
 
   refreshToken RefreshToken?
 
-  userAgent String?
-  ipAddress String?
+  type       DeviceType?
+  deviceName String?
+  userAgent  String?
+  ipAddress  String?
 
   expiresAt DateTime
 
@@ -76,6 +78,12 @@ model VerificationToken {
   @@index([userId])
   @@index([tokenHash])
   @@index([expiresAt])
+}
+
+enum DeviceType {
+  laptop
+  phone
+  tablet
 }
 
 enum TokenType {

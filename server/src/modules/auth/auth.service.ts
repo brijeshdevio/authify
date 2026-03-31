@@ -11,6 +11,7 @@ import {
 import { hashString, randomString } from "../../lib/crypto";
 import { signJwt } from "../../lib/jwt";
 import { ChangePasswordDto, LoginDto, RegsiterDto } from "./auth.schema";
+import { DeviceInfo } from "./auth.types";
 
 export const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$/y1jJS2H1+mZ1Sg77uvgAg$AYsdfipeVFRQxT2zXSCaw6581/ZdUV1I1MOjlng0fCM";
@@ -22,7 +23,7 @@ export class AuthService {
     return new Date(Date.now() + ms);
   }
 
-  private async createSession(userId: string) {
+  private async createSession(userId: string, deviceInfo: DeviceInfo) {
     const token = randomString(64);
     const tokenHash = hashString(token);
 
@@ -30,6 +31,7 @@ export class AuthService {
       data: {
         userId,
         expiresAt: this.calculateExpiry(7 * 24 * 60 * 60 * 1000),
+        ...deviceInfo,
         refreshToken: {
           create: {
             tokenHash,
@@ -82,7 +84,7 @@ export class AuthService {
     }
   }
 
-  async login(data: LoginDto) {
+  async login(data: LoginDto, deviceInfo: DeviceInfo) {
     const user = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -94,7 +96,7 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    const refreshToken = await this.createSession(user.id);
+    const refreshToken = await this.createSession(user.id, deviceInfo);
     const accessToken = signJwt({ sub: user.id, role: user.role });
 
     return { refreshToken, accessToken };

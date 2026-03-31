@@ -1,13 +1,36 @@
 import { Request, Response } from "express";
+import { UAParser } from "ua-parser-js";
 import { AuthService } from "./auth.service";
 import { apiResponse } from "../../utils/apiResponse";
 import { clearCookie, setCookie } from "../../lib/cookie";
+import { DeviceInfo } from "./auth.types";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   private getUserId = (req: Request): string => {
     return ((req as any).user as { id: string }).id;
+  };
+
+  deviceInfo = (req: Request): DeviceInfo => {
+    const parser = new UAParser(req.headers["user-agent"]);
+    const device = parser.getDevice();
+    const os = parser.getOS();
+    const browser = parser.getBrowser();
+
+    let type: DeviceInfo["type"] = "laptop"; // default
+
+    if (device.type === "mobile") type = "phone";
+    else if (device.type === "tablet") type = "tablet";
+
+    const deviceName = `${os.name || "Unknown OS"} - ${browser.name || "Unknown Browser"}`;
+
+    return {
+      type,
+      deviceName,
+      userAgent: req?.headers["user-agent"],
+      ipAddress: req?.ip,
+    };
   };
 
   register = async (req: Request, res: Response) => {
@@ -22,7 +45,11 @@ export class AuthController {
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const tokens = await this.authService.login({ email, password });
+
+    const tokens = await this.authService.login(
+      { email, password },
+      this.deviceInfo(req),
+    );
     setCookie(res, "accessToken", tokens.accessToken, {
       maxAge: 1000 * 60 * 15,
     });

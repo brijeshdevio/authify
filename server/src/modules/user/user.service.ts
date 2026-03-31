@@ -47,6 +47,10 @@ export class UserService {
       },
       select: {
         id: true,
+        type: true,
+        deviceName: true,
+        ipAddress: true,
+        userAgent: true,
         expiresAt: true,
         createdAt: true,
       },
