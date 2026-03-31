@@ -1,32 +1,33 @@
-import { createContext, type ReactNode } from "react"
-import { useUser } from "@/hooks/useUser"
-import type { User } from "@/types/user"
+import { useProfile } from "@/features/user/user.hooks";
+import type { User } from "@/features/user/user.types";
+import { createContext, type ReactNode } from "react";
 
 type AuthContext = {
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
-}
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+};
 
 const initialState = {
   user: null,
   isLoading: false,
   isAuthenticated: false,
-}
+};
 
-export const AuthContext = createContext<AuthContext>(initialState)
+export const AuthContext = createContext<AuthContext>(initialState);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data, isPending, isSuccess } = useUser()
+  const { data, isPending, isSuccess } = useProfile();
+
   return (
     <AuthContext.Provider
       value={{
-        user: data,
+        user: data?.user,
         isLoading: isPending,
         isAuthenticated: isSuccess && !!data,
       }}
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }

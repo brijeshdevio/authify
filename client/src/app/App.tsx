@@ -1,11 +1,11 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { AuthProvider } from "./Provider"
-import { AppRoutes } from "./Router"
-import { Toaster } from "sonner"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import { AppRoutes } from "./AppRoutes";
+import { AuthProvider } from "./Provider";
+import "@/styles/App.css";
 
-const queryClient = new QueryClient()
-
-export function App() {
+function App() {
+  const queryClient = new QueryClient();
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -15,7 +15,7 @@ export function App() {
       </QueryClientProvider>
       <Toaster />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

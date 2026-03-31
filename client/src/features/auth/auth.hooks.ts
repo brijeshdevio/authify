@@ -1,42 +1,29 @@
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "./auth.service";
 import {
   LoginSchema,
-  type LoginDto,
   RegisterSchema,
+  type LoginDto,
   type RegisterDto,
-} from "./auth.schema"
-import { notifyError, notifySuccess } from "@/utils/notifiy"
-import { AuthServices } from "./auth.service"
+} from "./auth.schema";
+import { notifyError, notifySuccess } from "@/utils/notify";
 
-export const useRegisterMutation = () =>
+const useRegister = () =>
   useMutation({
-    mutationKey: ["register"],
-    mutationFn: AuthServices.register,
+    mutationKey: ["auth/register"],
+    mutationFn: authService.register,
+    onSuccess: (data) =>
+      notifySuccess(data?.message ?? "Successfully registered"),
     onError: (error: unknown) => notifyError(error),
-  })
-
-export const useLoginMutation = () =>
-  useMutation({
-    mutationKey: ["login"],
-    mutationFn: AuthServices.login,
-    onError: (error: unknown) => notifyError(error),
-  })
-
-export const useLogoutMutation = () =>
-  useMutation({
-    mutationKey: ["logout"],
-    mutationFn: AuthServices.logout,
-    onError: (error: unknown) => notifyError(error),
-  })
+  });
 
 export const useRegisterFacade = () => {
-  const { mutate, isPending, isSuccess, data } = useRegisterMutation()
-  const navigate = useNavigate()
+  const { mutate, isPending, isSuccess } = useRegister();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -44,24 +31,30 @@ export const useRegisterFacade = () => {
     formState: { errors },
   } = useForm<RegisterDto>({
     resolver: zodResolver(RegisterSchema),
-  })
+  });
 
   function submit(data: RegisterDto) {
-    mutate(data)
+    mutate(data);
   }
 
   useEffect(() => {
-    if (isSuccess && data) {
-      notifySuccess(data.message || "Registration successful")
-      navigate("/login")
+    if (isSuccess) {
+      navigate("/login");
     }
-  }, [isSuccess, data, navigate])
+  }, [isSuccess, navigate]);
 
-  return { submit, isPending, register, handleSubmit, errors }
-}
+  return { submit, isPending, register, handleSubmit, errors };
+};
+
+const useLogin = () =>
+  useMutation({
+    mutationKey: ["auth/login"],
+    mutationFn: authService.login,
+    onError: (error: unknown) => notifyError(error),
+  });
 
 export const useLoginFacade = () => {
-  const { mutate, isPending, isSuccess, data } = useLoginMutation()
+  const { mutate, isPending, isSuccess } = useLogin();
 
   const {
     handleSubmit,
@@ -69,27 +62,29 @@ export const useLoginFacade = () => {
     formState: { errors },
   } = useForm<LoginDto>({
     resolver: zodResolver(LoginSchema),
-  })
+  });
 
   function submit(data: LoginDto) {
-    mutate(data)
+    mutate(data);
   }
 
   useEffect(() => {
-    if (isSuccess && data) {
-      notifySuccess(data.message || "Login successful")
-      window.location.href = "/dashboard"
+    if (isSuccess) {
+      window.location.href = "/dashboard";
     }
-  }, [isSuccess, data])
+  }, [isSuccess]);
 
-  return { submit, isPending, register, handleSubmit, errors }
-}
+  return { submit, isPending, register, handleSubmit, errors };
+};
 
-export const useLogoutFacade = () => {
-  const { mutate, isSuccess } = useLogoutMutation()
-
-  useEffect(() => {
-    if (isSuccess) window.location.reload()
-  }, [isSuccess])
-  return { logout: mutate }
-}
+export const useLogout = () => {
+  return useMutation({
+    mutationKey: ["auth/logout"],
+    mutationFn: authService.logout,
+    onSuccess: (data) => {
+      notifySuccess(data?.message ?? "Successfully logged out");
+      window.location.href = "/auth/login";
+    },
+    onError: (error: unknown) => notifyError(error),
+  });
+};
