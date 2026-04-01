@@ -12,6 +12,7 @@ import { Loader } from "@/shared/ui/Loader";
 import { Error } from "@/shared/ui/Error";
 import { formatTime } from "@/utils/formatTime";
 import { useAuth, useSessions } from "@/features/user/user.hooks";
+import { Link } from "react-router-dom";
 
 export interface Session {
   id: string;
@@ -139,9 +140,11 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="ml-auto">
-            <Button className="btn-primary btn-sm">
-              <Edit className="h-4 w-4" />
-            </Button>
+            <Link to="/settings">
+              <Button className="btn-primary btn-sm">
+                <Edit className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

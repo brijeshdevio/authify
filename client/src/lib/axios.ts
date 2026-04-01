@@ -10,10 +10,13 @@ export const axiosClient = axios.create({
 
 // 🔒 State to control refresh flow
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: Array<{
+  reject: (err: unknown) => void;
+  resolve: (err: unknown) => void;
+}> = [];
 
 // Process queued requests
-const processQueue = (error, token = null) => {
+const processQueue = (error: unknown, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -39,7 +42,7 @@ axiosClient.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: () => resolve(axiosClient(originalRequest)),
-            reject: (err) => reject(err),
+            reject: (err: unknown) => reject(err),
           });
         });
       }
@@ -60,7 +63,7 @@ axiosClient.interceptors.response.use(
         return axiosClient(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        window.location.href = "/auth/login";
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
