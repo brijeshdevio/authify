@@ -44,6 +44,14 @@ export function Navbar() {
               >
                 Dashboard
               </NavLink>
+              <NavLink
+                to={"/settings"}
+                className={({ isActive }) =>
+                  `hover:text-primary text-sm opacity-80 hover:opacity-100 ${isActive ? "text-primary opacity-100" : ""}`
+                }
+              >
+                Settings
+              </NavLink>
               <Button onClick={handleLogout} isLoading={isPending}>
                 Logout
               </Button>
@@ -84,6 +92,11 @@ export function Navbar() {
                 <Link to={"/dashboard"} onClick={() => setIsOpen(false)}>
                   <Button className="btn-ghost btn-md w-full text-sm">
                     Dashboard
+                  </Button>
+                </Link>
+                <Link to={"/settings"} onClick={() => setIsOpen(false)}>
+                  <Button className="btn-ghost btn-md w-full text-sm">
+                    Settings
                   </Button>
                 </Link>
                 <Button
