@@ -6,7 +6,12 @@ import { useContext } from "react";
 import { AuthContext } from "@/app/Provider";
 import type { AxiosResponse } from "axios";
 import { notifyError, notifySuccess } from "@/utils/notify";
-import { UpdateSchema, type UpdateDto } from "./user.schema";
+import {
+  ChangePasswordSchema,
+  UpdateSchema,
+  type ChangePasswordDto,
+  type UpdateDto,
+} from "./user.schema";
 
 export function useProfile() {
   return useQuery({
@@ -67,6 +72,34 @@ export const useUpdateFacade = () => {
   });
 
   function submit(data: UpdateDto) {
+    mutate(data);
+  }
+
+  return { submit, isPending, register, handleSubmit, errors };
+};
+
+const useChangePassword = () => {
+  return useMutation({
+    mutationKey: ["users/change-password"],
+    mutationFn: userService.changePassword,
+    onSuccess: (data) =>
+      notifySuccess(data?.message ?? "Successfully password changed"),
+    onError: (error: unknown) => notifyError(error),
+  });
+};
+
+export const useChangePasswordFacade = () => {
+  const { mutate, isPending } = useChangePassword();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ChangePasswordDto>({
+    resolver: zodResolver(ChangePasswordSchema),
+  });
+
+  function submit(data: ChangePasswordDto) {
     mutate(data);
   }
 

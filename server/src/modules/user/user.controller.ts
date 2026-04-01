@@ -46,4 +46,17 @@ export class UserController {
       data: session,
     });
   };
+
+  changePassword = async (req: Request, res: Response) => {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    await this.userService.changePassword(this.getUserId(req), {
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+    return apiResponse(res, {
+      status: 200,
+      message: "Password changed successfully",
+    });
+  };
 }

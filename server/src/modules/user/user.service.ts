@@ -1,9 +1,11 @@
+import { hashPassword, verifyPassword } from "../../lib/argon";
 import { prisma } from "../../lib/prisma";
 import {
   ForbiddenException,
   UnauthorizedException,
 } from "../../utils/exceptions";
-import { UpdateDto } from "./user.schema";
+import { DUMMY_HASH } from "../auth/auth.service";
+import { ChangePasswordDto, UpdateDto } from "./user.schema";
 
 export class UserService {
   constructor() {}
@@ -75,5 +77,32 @@ export class UserService {
     if (session) return session;
 
     throw new ForbiddenException();
+  }
+
+  async changePassword(id: string, data: ChangePasswordDto) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new ForbiddenException("You are not logged in.");
+    }
+
+    const passwordHash = user?.passwordHash ?? DUMMY_HASH;
+    const isPasswordValid = await verifyPassword(
+      passwordHash,
+      data.oldPassword,
+    );
+
+    if (!isPasswordValid) {
+      throw new ForbiddenException("Invalid old password.");
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash: await hashPassword(data.newPassword),
+      },
+    });
   }
 }
