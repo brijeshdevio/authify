@@ -52,7 +52,7 @@ function Sessions() {
             key={session.id}
             className="card bg-base-200 border-base-content/5 border"
           >
-            <div className="card-body group flex-row items-center gap-x-5">
+            <div className="card-body group items-center gap-5 md:flex-row">
               <div className="bg-base-100 border-base-content/5 rounded-xl border p-3">
                 <Device device={session.type} />
               </div>
@@ -117,7 +117,7 @@ export default function Dashboard() {
         </div>
       </section>
       <section className="card bg-base-200 border-base-content/5 mt-5 border">
-        <div className="card-body flex-row items-center gap-x-5">
+        <div className="card-body items-center gap-x-5 sm:flex-row">
           <div className="avatar">
             <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring-1 ring-offset-2">
               <img
@@ -128,7 +128,7 @@ export default function Dashboard() {
           <div className="flex flex-col gap-y-0.5">
             <h3 className="text-xl font-semibold">{user?.name}</h3>
             <h4 className="text-neutral-content text-sm">{user?.email}</h4>
-            <div className="mt-2 flex flex-row gap-x-2">
+            <div className="mt-2 flex flex-row flex-wrap gap-2">
               <div className="badge badge-soft badge-primary">
                 <BadgeCheck className="text-primary h-4 w-4" />
                 <span className="text-xs">Identity Verified</span>

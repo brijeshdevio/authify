@@ -32,7 +32,7 @@ export function UserLayout() {
     <>
       <Suspense fallback={<Loader className="h-screen" />}>
         <Navbar />
-        <main className="mx-auto w-full p-5 md:w-[90%]">
+        <main className="mx-auto w-full px-3 py-5 sm:p-5 md:w-[90%]">
           <Outlet />
         </main>
         <Footer />
