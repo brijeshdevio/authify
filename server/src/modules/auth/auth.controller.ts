@@ -100,4 +100,13 @@ export class AuthController {
       message: "Password changed successfully",
     });
   };
+
+  verifyEmail = async (req: Request, res: Response) => {
+    const token = req.params?.token as string;
+    await this.authService.verifyEmail(token);
+    return apiResponse(res, {
+      status: 200,
+      message: "Email verified successfully",
+    });
+  };
 }

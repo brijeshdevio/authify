@@ -9,6 +9,7 @@ const envSchema = z.object({
   FRONTEND: z.url(),
   EMAIL_USERNAME: z.string(),
   EMAIL_PASSWORD: z.string(),
+  REDIS_URL: z.url(),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -5,6 +5,7 @@ import { prisma } from "../../lib/prisma";
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   InternalServerErrorException,
   UnauthorizedException,
 } from "../../utils/exceptions";
@@ -12,6 +13,9 @@ import { hashString, randomString } from "../../lib/crypto";
 import { signJwt } from "../../lib/jwt";
 import { ChangePasswordDto, LoginDto, RegsiterDto } from "./auth.schema";
 import { DeviceInfo } from "./auth.types";
+import { sendEmail } from "../../lib/mailer";
+import { verification } from "../../templates/verification";
+import { emailQueue } from "../../queues/email.queue";
 
 export const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$/y1jJS2H1+mZ1Sg77uvgAg$AYsdfipeVFRQxT2zXSCaw6581/ZdUV1I1MOjlng0fCM";
@@ -56,10 +60,59 @@ export class AuthService {
     return token;
   }
 
+  async sendVerificationToken(userId: string) {
+    const token = randomString(16);
+    const tokenHash = hashString(token);
+    const verificationToken = await prisma.verificationToken.create({
+      data: {
+        userId,
+        tokenHash,
+        expiresAt: this.calculateExpiry(10 * 60 * 1000),
+        type: "EMAIL_VERIFY",
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    await sendEmail(
+      verificationToken.user.email,
+      `Verify your email`,
+      verification({ token }),
+    );
+  }
+
+  async verifyEmail(token: string) {
+    const tokenHash = hashString(token);
+    const verificationToken = await prisma.verificationToken.findUnique({
+      where: {
+        tokenHash,
+        expiresAt: { gt: new Date() },
+        user: { isVerified: false },
+      },
+    });
+
+    if (!verificationToken) {
+      throw new BadRequestException("Invalid or expired token");
+    }
+
+    await prisma.verificationToken.delete({
+      where: { id: verificationToken?.id },
+    });
+
+    await prisma.user.update({
+      where: { id: verificationToken?.userId },
+      data: {
+        isVerified: true,
+        verifiedAt: new Date(),
+      },
+    });
+  }
+
   async register(data: RegsiterDto) {
     try {
       const hashedPassword = await hashPassword(data.password);
-      return await prisma.user.create({
+      const user = await prisma.user.create({
         data: {
           name: data.name,
           email: data.email,
@@ -71,6 +124,11 @@ export class AuthService {
           email: true,
         },
       });
+      await emailQueue.add("send-email", {
+        userId: user?.id,
+        email: user?.email,
+      });
+      return user;
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError &&
@@ -94,6 +152,10 @@ export class AuthService {
 
     if (!user || !isPasswordValid) {
       throw new UnauthorizedException("Invalid credentials");
+    }
+
+    if (!user.isVerified) {
+      throw new ForbiddenException("Please verify your email.");
     }
 
     const refreshToken = await this.createSession(user.id, deviceInfo);

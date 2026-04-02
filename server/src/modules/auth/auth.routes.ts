@@ -32,3 +32,4 @@ authRoutes.patch(
   authenticateMiddleware,
   authController.changePassword,
 );
+authRoutes.get("/verify-email/:token", authController.verifyEmail);
