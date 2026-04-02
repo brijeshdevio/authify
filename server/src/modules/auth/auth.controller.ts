@@ -118,4 +118,23 @@ export class AuthController {
       message: "Verification email sent successfully",
     });
   };
+
+  forgotPassword = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    await this.authService.forgotPassword(email);
+    return apiResponse(res, {
+      status: 200,
+      message: "Password reset email sent successfully",
+    });
+  };
+
+  resetPassword = async (req: Request, res: Response) => {
+    const token = req.params?.token as string;
+    const { password } = req.body;
+    await this.authService.resetPassword(token, { password });
+    return apiResponse(res, {
+      status: 200,
+      message: "Password reset successfully",
+    });
+  };
 }

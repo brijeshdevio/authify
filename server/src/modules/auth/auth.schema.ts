@@ -37,6 +37,24 @@ export const sendVerifyEmailSchema = z
   })
   .strict();
 
+export const forgotPasswordSchema = z
+  .object({
+    email: z.email("Invalid email address"),
+  })
+  .strict();
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(30),
+  })
+  .strict();
+
 export type RegsiterDto = z.infer<typeof regsiterSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+export type SendVerifyEmailDto = z.infer<typeof sendVerifyEmailSchema>;
+export type ForgotPasswordDto = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;

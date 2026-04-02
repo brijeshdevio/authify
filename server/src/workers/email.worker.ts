@@ -1,8 +1,15 @@
-// workers/email.worker.ts
 import { Worker } from "bullmq";
 import { connection } from "../config/redis";
 import { prisma } from "../lib/prisma";
 import { AuthService } from "../modules/auth/auth.service";
+
+async function verifyEmail(userId: string) {
+  await new AuthService().sendVerificationToken(userId);
+}
+
+async function resetPasswordEmail(userId: string) {
+  await new AuthService().sendResetPasswordToken(userId);
+}
 
 new Worker(
   "email-queue",
@@ -18,7 +25,8 @@ new Worker(
 
     if (!user?.id) return;
 
-    await new AuthService().sendVerificationToken(user.id);
+    if (job.name === "verify-email") verifyEmail(userId);
+    if (job.name === "reset-password") resetPasswordEmail(userId);
   },
   {
     connection,

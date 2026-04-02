@@ -1,15 +1,15 @@
 import { env } from "../config/env";
 
-type Verification = {
+type ResetPassword = {
   token: string;
 };
 
-export const verification = ({ token }: Verification) => `
+export const resetPasswordTemplate = ({ token }: ResetPassword) => `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Verify Your Email</title>
+  <title>Reset your password</title>
 </head>
 <body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, sans-serif;">
 
@@ -19,7 +19,7 @@ export const verification = ({ token }: Verification) => `
 
         <table width="500" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
 
-          <!-- Header -->
+            <!-- Header -->
           <tr>
             <td style="background:#4f46e5; color:#ffffff; text-align:center; padding:20px;">
               <h1 style="margin:0; font-size:22px;">Authify</h1>
@@ -29,42 +29,33 @@ export const verification = ({ token }: Verification) => `
           <!-- Body -->
           <tr>
             <td style="padding:30px; color:#333;">
-              <h2 style="margin-top:0;">Verify your email</h2>
+              <h2 style="margin-top:0;">Reset your password</h2>
               <p style="line-height:1.6;">
-                Thanks for signing up! Please confirm your email address by clicking the button below.
+                We received a request to reset your password. If you didn't make this request, you can ignore this email.
               </p>
-
-              <!-- CTA Button -->
-              <div style="text-align:center; margin:30px 0;">
-                <a href="${env.FRONTEND}/auth/verify-email?token=${token}"
-                   style="background:#4f46e5; color:#ffffff; text-decoration:none; padding:12px 20px; border-radius:5px; font-weight:bold; display:inline-block;">
-                  Verify Email
-                </a>
-              </div>
-
               <p style="line-height:1.6;">
-                If the button doesn't work, copy and paste this link into your browser:
+                To reset your password, click the button below.
               </p>
-
-              <p style="word-break:break-all; color:#4f46e5;">
-             ${env.FRONTEND}/auth/verify-email?token=${token}
+              <p style="line-height:1.6;">
+                <a href="${env.FRONTEND}/auth/reset-password?token=${token}" style="background-color:#4f46e5; color:#ffffff; padding:10px 20px; display:block; text-decoration:none;width:fit-content;margin:10px auto;">Reset Password</a>
               </p>
-
-              <p style="margin-top:30px; font-size:12px; color:#888;">
-                If you didn’t create an account, you can safely ignore this email.
+              <p style="line-height:1.6;">
+                If you didn't request a password reset, you can safely ignore this email.
               </p>
             </td>
           </tr>
 
-          <!-- Footer -->
+         <!-- Footer -->
           <tr>
             <td style="background:#f9fafb; text-align:center; padding:15px; font-size:12px; color:#888;">
               © 2026 Authify. All rights reserved.
             </td>
           </tr>
         </table>
+
       </td>
     </tr>
   </table>
+
 </body>
 </html>`;

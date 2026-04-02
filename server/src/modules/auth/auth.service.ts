@@ -11,11 +11,17 @@ import {
 } from "../../utils/exceptions";
 import { hashString, randomString } from "../../lib/crypto";
 import { signJwt } from "../../lib/jwt";
-import { ChangePasswordDto, LoginDto, RegsiterDto } from "./auth.schema";
+import {
+  ChangePasswordDto,
+  LoginDto,
+  RegsiterDto,
+  ResetPasswordDto,
+} from "./auth.schema";
 import { DeviceInfo } from "./auth.types";
 import { sendEmail } from "../../lib/mailer";
-import { verification } from "../../templates/verification";
+import { verificationTemplate } from "../../templates/verification.template";
 import { emailQueue } from "../../queues/email.queue";
+import { resetPasswordTemplate } from "../../templates/resetPassword.template";
 
 export const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$/y1jJS2H1+mZ1Sg77uvgAg$AYsdfipeVFRQxT2zXSCaw6581/ZdUV1I1MOjlng0fCM";
@@ -78,7 +84,7 @@ export class AuthService {
     await sendEmail(
       verificationToken.user.email,
       `Verify your email`,
-      verification({ token }),
+      verificationTemplate({ token }),
     );
   }
 
@@ -121,10 +127,47 @@ export class AuthService {
       throw new BadRequestException("Invalid email");
     }
 
-    await emailQueue.add("send-email", {
+    await emailQueue.add("verify-email", {
       userId: user?.id,
       email,
     });
+  }
+
+  async forgotPassword(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email, isVerified: true },
+    });
+
+    if (!user) {
+      throw new BadRequestException("Invalid email");
+    }
+
+    await emailQueue.add("reset-password", {
+      userId: user?.id,
+      email,
+    });
+  }
+
+  async sendResetPasswordToken(userId: string) {
+    const token = randomString(16);
+    const tokenHash = hashString(token);
+    const verificationToken = await prisma.verificationToken.create({
+      data: {
+        userId,
+        tokenHash,
+        expiresAt: this.calculateExpiry(10 * 60 * 1000),
+        type: "PASSWORD_RESET",
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    await sendEmail(
+      verificationToken.user.email,
+      `Reset your password`,
+      resetPasswordTemplate({ token }),
+    );
   }
 
   async register(data: RegsiterDto) {
@@ -142,7 +185,7 @@ export class AuthService {
           email: true,
         },
       });
-      await emailQueue.add("send-email", {
+      await emailQueue.add("verify-email", {
         userId: user?.id,
         email: user?.email,
       });
@@ -267,6 +310,32 @@ export class AuthService {
       where: { id: userId },
       data: {
         passwordHash: await hashPassword(data.newPassword),
+      },
+    });
+  }
+
+  async resetPassword(token: string, data: ResetPasswordDto) {
+    const tokenHash = hashString(token);
+    const verificationToken = await prisma.verificationToken.findUnique({
+      where: {
+        tokenHash,
+        expiresAt: { gt: new Date() },
+        type: "PASSWORD_RESET",
+      },
+    });
+
+    if (!verificationToken) {
+      throw new UnauthorizedException("Invalid or expired token");
+    }
+
+    await prisma.verificationToken.delete({
+      where: { id: verificationToken?.id },
+    });
+
+    await prisma.user.update({
+      where: { id: verificationToken?.userId },
+      data: {
+        passwordHash: await hashPassword(data.password),
       },
     });
   }

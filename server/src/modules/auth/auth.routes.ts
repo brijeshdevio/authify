@@ -4,8 +4,10 @@ import { AuthController } from "./auth.controller";
 import { zodMiddleware } from "../../middleware/zod.middleware";
 import {
   changePasswordSchema,
+  forgotPasswordSchema,
   loginSchema,
   regsiterSchema,
+  resetPasswordSchema,
   sendVerifyEmailSchema,
 } from "./auth.schema";
 import { refreshTokenMiddleware } from "./auth.middleware";
@@ -38,4 +40,14 @@ authRoutes.post(
   "/send-verification-email",
   zodMiddleware(sendVerifyEmailSchema),
   authController.sendVerifyEmail,
+);
+authRoutes.post(
+  "/forgot-password",
+  zodMiddleware(forgotPasswordSchema),
+  authController.forgotPassword,
+);
+authRoutes.post(
+  "/reset-password/:token",
+  zodMiddleware(resetPasswordSchema),
+  authController.resetPassword,
 );
