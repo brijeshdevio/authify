@@ -6,7 +6,7 @@ import {
   changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
-  regsiterSchema,
+  registerSchema,
   resetPasswordSchema,
   sendVerifyEmailSchema,
 } from "./auth.schema";
@@ -18,7 +18,7 @@ const authController = new AuthController(new AuthService());
 
 authRoutes.post(
   "/register",
-  zodMiddleware(regsiterSchema),
+  zodMiddleware(registerSchema),
   authController.register,
 );
 authRoutes.post("/login", zodMiddleware(loginSchema), authController.login);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const regsiterSchema = z
+export const registerSchema = z
   .object({
     name: z.string().min(3).max(30),
     email: z.email("Invalid email address"),
@@ -52,7 +52,7 @@ export const resetPasswordSchema = z
   })
   .strict();
 
-export type RegsiterDto = z.infer<typeof regsiterSchema>;
+export type RegisterDto = z.infer<typeof registerSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
 export type SendVerifyEmailDto = z.infer<typeof sendVerifyEmailSchema>;

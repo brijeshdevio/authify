@@ -13,14 +13,12 @@ import { signJwt } from "../../lib/jwt";
 import {
   ChangePasswordDto,
   LoginDto,
-  RegsiterDto,
+  RegisterDto,
   ResetPasswordDto,
 } from "./auth.schema";
 import { DeviceInfo } from "./auth.types";
-import { sendEmail } from "../../lib/mailer";
-import { verificationTemplate } from "../../templates/verification.template";
 import { emailQueue } from "../../queues/email.queue";
-import { resetPasswordTemplate } from "../../templates/resetPassword.template";
+import { JOBS } from "../../constants/queue";
 
 export const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$/y1jJS2H1+mZ1Sg77uvgAg$AYsdfipeVFRQxT2zXSCaw6581/ZdUV1I1MOjlng0fCM";
@@ -65,28 +63,6 @@ export class AuthService {
     return token;
   }
 
-  async sendVerificationToken(userId: string) {
-    const token = randomString(16);
-    const tokenHash = hashString(token);
-    const verificationToken = await prisma.verificationToken.create({
-      data: {
-        userId,
-        tokenHash,
-        expiresAt: this.calculateExpiry(10 * 60 * 1000),
-        type: "EMAIL_VERIFY",
-      },
-      include: {
-        user: true,
-      },
-    });
-
-    await sendEmail(
-      verificationToken.user.email,
-      `Verify your email`,
-      verificationTemplate({ token }),
-    );
-  }
-
   async verifyEmail(token: string) {
     const tokenHash = hashString(token);
     const verificationToken = await prisma.verificationToken.findUnique({
@@ -126,7 +102,7 @@ export class AuthService {
       throw new BadRequestException("Invalid email");
     }
 
-    await emailQueue.add("verify-email", {
+    await emailQueue.add(JOBS.SEND_VERIFICATION_EMAIL, {
       userId: user?.id,
       email,
     });
@@ -141,35 +117,13 @@ export class AuthService {
       throw new BadRequestException("Invalid email");
     }
 
-    await emailQueue.add("reset-password", {
+    await emailQueue.add(JOBS.RESET_PASSWORD_EMAIL, {
       userId: user?.id,
       email,
     });
   }
 
-  async sendResetPasswordToken(userId: string) {
-    const token = randomString(16);
-    const tokenHash = hashString(token);
-    const verificationToken = await prisma.verificationToken.create({
-      data: {
-        userId,
-        tokenHash,
-        expiresAt: this.calculateExpiry(10 * 60 * 1000),
-        type: "PASSWORD_RESET",
-      },
-      include: {
-        user: true,
-      },
-    });
-
-    await sendEmail(
-      verificationToken.user.email,
-      `Reset your password`,
-      resetPasswordTemplate({ token }),
-    );
-  }
-
-  async register(data: RegsiterDto) {
+  async register(data: RegisterDto) {
     try {
       const hashedPassword = await hashPassword(data.password);
       const user = await prisma.user.create({
@@ -184,7 +138,7 @@ export class AuthService {
           email: true,
         },
       });
-      await emailQueue.add("verify-email", {
+      await emailQueue.add(JOBS.SEND_VERIFICATION_EMAIL, {
         userId: user?.id,
         email: user?.email,
       });
