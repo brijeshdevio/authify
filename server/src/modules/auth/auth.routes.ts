@@ -6,6 +6,7 @@ import {
   changePasswordSchema,
   loginSchema,
   regsiterSchema,
+  sendVerifyEmailSchema,
 } from "./auth.schema";
 import { refreshTokenMiddleware } from "./auth.middleware";
 import { authenticateMiddleware } from "../../middleware/authenticate.middleware";
@@ -33,3 +34,8 @@ authRoutes.patch(
   authController.changePassword,
 );
 authRoutes.get("/verify-email/:token", authController.verifyEmail);
+authRoutes.post(
+  "/send-verification-email",
+  zodMiddleware(sendVerifyEmailSchema),
+  authController.sendVerifyEmail,
+);

@@ -109,6 +109,24 @@ export class AuthService {
     });
   }
 
+  async againSendVerificationToken(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email, isVerified: false },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException("Invalid email");
+    }
+
+    await emailQueue.add("send-email", {
+      userId: user?.id,
+      email,
+    });
+  }
+
   async register(data: RegsiterDto) {
     try {
       const hashedPassword = await hashPassword(data.password);

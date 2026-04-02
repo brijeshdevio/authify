@@ -109,4 +109,13 @@ export class AuthController {
       message: "Email verified successfully",
     });
   };
+
+  sendVerifyEmail = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    await this.authService.againSendVerificationToken(email);
+    return apiResponse(res, {
+      status: 200,
+      message: "Verification email sent successfully",
+    });
+  };
 }

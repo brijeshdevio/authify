@@ -31,6 +31,12 @@ export const changePasswordSchema = z
   })
   .strict();
 
+export const sendVerifyEmailSchema = z
+  .object({
+    email: z.email("Invalid email address"),
+  })
+  .strict();
+
 export type RegsiterDto = z.infer<typeof regsiterSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;

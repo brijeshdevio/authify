@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
   "name": "Jonson Carter",       
-  "email": "gelosa4736@flownue.com",    
+  "email": "kinih12939@fengnu.com",    
   "password": "12345678" 
 }
 
@@ -27,6 +27,24 @@ Content-Type: application/json
 {
   "email": "gelosa4736@flownue.com",     
   "password": "12345678"         
+}
+
+
+### Send Verification Email
+POST {{BASE_URL}}/api/auth/send-verification-email
+Content-Type: application/json
+
+{
+  "email": "kinih12939@fengnu.com"  
+}
+
+
+### Verify Email
+GET {{BASE_URL}}/api/auth/verify-email/7d6cef7568796d230fa297d1ef456219
+Content-Type: application/json
+
+{
+  "email": "kinih12939@fengnu.com"  
 }
 
 
