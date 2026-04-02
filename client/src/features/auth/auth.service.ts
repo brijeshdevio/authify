@@ -7,4 +7,8 @@ export const authService = {
   login: (data: LoginDto) =>
     axiosClient.post("/auth/login", data).then((res) => res.data),
   logout: () => axiosClient.post("/auth/logout").then((res) => res.data),
+  resendVerifyEmail: (data: { email: string }) =>
+    axiosClient
+      .post("/auth/send-verification-email", data)
+      .then((res) => res.data),
 };

@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { authService } from "./auth.service";
 import {
   LoginSchema,
@@ -23,12 +22,12 @@ const useRegister = () =>
 
 export const useRegisterFacade = () => {
   const { mutate, isPending, isSuccess } = useRegister();
-  const navigate = useNavigate();
 
   const {
     handleSubmit,
     register,
     formState: { errors },
+    getValues,
   } = useForm<RegisterDto>({
     resolver: zodResolver(RegisterSchema),
   });
@@ -37,13 +36,15 @@ export const useRegisterFacade = () => {
     mutate(data);
   }
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigate("/login");
-    }
-  }, [isSuccess, navigate]);
-
-  return { submit, isPending, register, handleSubmit, errors };
+  return {
+    submit,
+    isPending,
+    register,
+    handleSubmit,
+    errors,
+    isSuccess,
+    getValues,
+  };
 };
 
 const useLogin = () =>
@@ -85,6 +86,15 @@ export const useLogout = () => {
       notifySuccess(data?.message ?? "Successfully logged out");
       window.location.href = "/auth/login";
     },
+    onError: (error: unknown) => notifyError(error),
+  });
+};
+
+export const useResendVerifyEmail = (data: { email: string }) => {
+  return useMutation({
+    mutationKey: ["auth/resend-verify-email"],
+    mutationFn: () => authService.resendVerifyEmail(data),
+    onSuccess: (data) => notifySuccess(data?.message ?? "Successfully sent"),
     onError: (error: unknown) => notifyError(error),
   });
 };

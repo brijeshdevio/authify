@@ -1,12 +1,70 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MailCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
-import { useRegisterFacade } from "@/features/auth/auth.hooks";
+import {
+  useRegisterFacade,
+  useResendVerifyEmail,
+} from "@/features/auth/auth.hooks";
+
+function CheckEmail({ email }: { email: string }) {
+  const { mutate, isPending } = useResendVerifyEmail({ email });
+
+  function handleSubmit() {
+    mutate();
+  }
+
+  return (
+    <>
+      <div className="card bg-base-200 border-base-content/10 w-full border">
+        <div className="card-body flex flex-col gap-y-5 shadow-2xl">
+          <div className="flex flex-col text-center">
+            <div className="avatar avatar-placeholder mx-auto w-fit">
+              <div className="bg-neutral text-neutral-content w-16 rounded-full">
+                <MailCheck className="text-primary" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-5 text-center">
+            <div>
+              <h2 className="card-title mx-auto w-fit">Check your email</h2>
+              <p className="text-neutral-content">
+                We've sent a verification link to {email}.
+              </p>
+            </div>
+            <Button
+              className="btn-primary"
+              isLoading={isPending}
+              onClick={handleSubmit}
+            >
+              Resend Email
+            </Button>
+          </div>
+          <div className="text-center">
+            <Link to={"/auth/login"} className="link hover:text-primary">
+              Back to Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
 
 export default function Register() {
-  const { handleSubmit, submit, register, isPending, errors } =
-    useRegisterFacade();
+  const {
+    handleSubmit,
+    submit,
+    register,
+    isPending,
+    errors,
+    isSuccess,
+    getValues,
+  } = useRegisterFacade();
+
+  if (isSuccess && getValues("email")) {
+    return <CheckEmail email={getValues("email")} />;
+  }
 
   return (
     <>
