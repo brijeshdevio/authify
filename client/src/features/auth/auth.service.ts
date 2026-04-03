@@ -11,6 +11,8 @@ export const authService = {
     axiosClient
       .post("/auth/send-verification-email", data)
       .then((res) => res.data),
+  verifyEmail: (token: string) =>
+    axiosClient.get(`/auth/verify-email/${token}`).then((res) => res.data),
   forgotPassword: (data: { email: string }) =>
     axiosClient.post("/auth/forgot-password", data).then((res) => res.data),
   resetPassword: (data: ResetPasswordDto) =>

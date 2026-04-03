@@ -159,3 +159,24 @@ export const useResetPasswordFacade = () => {
 
   return { submit, isPending, register, handleSubmit, errors, isSuccess };
 };
+
+export const useVerifyEmail = (token: string) => {
+  return useMutation({
+    mutationKey: ["auth/verify-email"],
+    mutationFn: () => authService.verifyEmail(token),
+    onSuccess: (data) => {
+      notifySuccess(data?.message ?? "Email verified successfully");
+    },
+    onError: (error: unknown) => notifyError(error),
+  });
+};
+
+export const useVerifyEmailFacade = (token: string) => {
+  const { mutate: verifyMutate, isPending } = useVerifyEmail(token);
+
+  function verify() {
+    verifyMutate();
+  }
+
+  return { verify, isPending };
+};
