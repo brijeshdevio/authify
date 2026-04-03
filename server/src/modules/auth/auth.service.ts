@@ -7,7 +7,6 @@ import {
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
-  UnauthorizedException,
 } from "../../utils/exceptions";
 import { hashString, randomString } from "../../lib/crypto";
 import { signJwt } from "../../lib/jwt";
@@ -212,7 +211,7 @@ export class AuthService {
     const isPasswordValid = await verifyPassword(passwordHash, data.password);
 
     if (!user || !isPasswordValid) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new ForbiddenException("Invalid credentials");
     }
 
     if (!user.isVerified) {
@@ -235,7 +234,7 @@ export class AuthService {
         },
       });
       if (!refreshToken) {
-        throw new UnauthorizedException("Invalid or expired token");
+        throw new ForbiddenException("Invalid or expired token");
       }
 
       await prisma.session.delete({
@@ -246,7 +245,7 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === PRISMA_CODES.NOT_FOUND
       ) {
-        throw new UnauthorizedException("Invalid or expired token");
+        throw new ForbiddenException("Invalid or expired token");
       }
 
       throw new InternalServerErrorException();
@@ -265,7 +264,7 @@ export class AuthService {
       });
 
       if (!refreshToken) {
-        throw new UnauthorizedException("Invalid or expired token");
+        throw new ForbiddenException("Invalid or expired token");
       }
 
       const newRefreshToken = await this.createRefreshToken(
@@ -281,7 +280,7 @@ export class AuthService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === PRISMA_CODES.NOT_FOUND
       ) {
-        throw new UnauthorizedException("Invalid or expired token");
+        throw new ForbiddenException("Invalid or expired token");
       }
 
       throw new InternalServerErrorException();
@@ -294,7 +293,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
 
     const isPasswordValid = await verifyPassword(
@@ -325,7 +324,7 @@ export class AuthService {
     });
 
     if (!verificationToken) {
-      throw new UnauthorizedException("Invalid or expired token");
+      throw new ForbiddenException("Invalid or expired token");
     }
 
     await prisma.verificationToken.delete({
