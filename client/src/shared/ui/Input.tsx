@@ -6,6 +6,7 @@ export interface InputDto extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: { message?: string };
   leftIcon?: React.ReactNode;
+  leftEle?: React.ReactNode;
   wrapperClassName?: string;
 }
 
@@ -13,6 +14,7 @@ export function Input({
   label,
   error,
   leftIcon,
+  leftEle,
   wrapperClassName,
   ...props
 }: InputDto) {
@@ -25,14 +27,17 @@ export function Input({
 
   return (
     <div className="flex w-full flex-col gap-0.5">
-      {label && (
-        <label
-          htmlFor={props?.id ?? id}
-          className="text-neutral-content text-[13px] font-medium"
-        >
-          {label}
-        </label>
-      )}
+      <div className="flex items-center justify-between">
+        {label && (
+          <label
+            htmlFor={props?.id ?? id}
+            className="text-neutral-content text-[13px] font-medium"
+          >
+            {label}
+          </label>
+        )}
+        {leftEle && leftEle}
+      </div>
       <div
         className={clsx(
           "input flex w-full items-center gap-2",

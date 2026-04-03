@@ -2,61 +2,43 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
-import { useLoginFacade } from "@/features/auth/auth.hooks";
+import { useResetPasswordFacade } from "@/features/auth/auth.hooks";
 
-export default function Login() {
+export default function ResetPassword() {
   const { handleSubmit, submit, register, isPending, errors } =
-    useLoginFacade();
+    useResetPasswordFacade();
 
   return (
     <>
       <div className="card bg-base-200 border-base-content/10 w-full border">
         <div className="card-body flex flex-col gap-y-5 shadow-2xl">
           <div className="flex flex-col text-center">
-            <h1 className="card-title mx-auto w-fit">Login to Authify</h1>
+            <h1 className="card-title mx-auto w-fit">Reset Password</h1>
             <p className="text-neutral-content">
-              Welcome back. Enter your credentials to access your account
+              Create a strong, unique password to keep your Authify identity
+              protected.
             </p>
           </div>
-
           <form
             className="flex flex-col gap-y-3"
             onSubmit={handleSubmit(submit)}
           >
             <Input
-              label="Email Address"
-              type="email"
-              placeholder="jonsonpoul@ex.com"
-              {...register("email")}
-              error={errors.email}
-            />
-            <Input
-              label="Password"
-              leftEle={
-                <Link
-                  to="/auth/forgot-password"
-                  className="link hover:text-primary text-[13px] font-medium underline"
-                >
-                  forgot password?
-                </Link>
-              }
+              label="New Password"
               type="password"
               placeholder="********"
               {...register("password")}
               error={errors.password}
             />
             <Button type="submit" className="btn-primary" isLoading={isPending}>
-              Login
+              Reset Password
               <ArrowRight className="h-5 w-5" />
             </Button>
           </form>
           <div className="text-center">
-            <p>
-              Don't have an account?{" "}
-              <Link to={"/auth/register"} className="link hover:text-primary">
-                Sign Up
-              </Link>
-            </p>
+            <Link to={"/auth/login"} className="link hover:text-primary">
+              Back to Login
+            </Link>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export const verificationTemplate = ({ token }: Verification) => `
 
               <!-- CTA Button -->
               <div style="text-align:center; margin:30px 0;">
-                <a href="${env.FRONTEND}/auth/verify-email?token=${token}"
+                <a href="${env.FRONTEND}/auth/verify-email/${token}"
                    style="background:#4f46e5; color:#ffffff; text-decoration:none; padding:12px 20px; border-radius:5px; font-weight:bold; display:inline-block;">
                   Verify Email
                 </a>
@@ -47,7 +47,7 @@ export const verificationTemplate = ({ token }: Verification) => `
               </p>
 
               <p style="word-break:break-all; color:#4f46e5;">
-             ${env.FRONTEND}/auth/verify-email?token=${token}
+             ${env.FRONTEND}/auth/verify-email/${token}
               </p>
 
               <p style="margin-top:30px; font-size:12px; color:#888;">

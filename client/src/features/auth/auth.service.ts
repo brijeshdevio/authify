@@ -1,5 +1,5 @@
 import { axiosClient } from "@/lib/axios";
-import type { LoginDto, RegisterDto } from "./auth.schema";
+import type { LoginDto, RegisterDto, ResetPasswordDto } from "./auth.schema";
 
 export const authService = {
   register: (data: RegisterDto) =>
@@ -10,5 +10,11 @@ export const authService = {
   resendVerifyEmail: (data: { email: string }) =>
     axiosClient
       .post("/auth/send-verification-email", data)
+      .then((res) => res.data),
+  forgotPassword: (data: { email: string }) =>
+    axiosClient.post("/auth/forgot-password", data).then((res) => res.data),
+  resetPassword: (data: ResetPasswordDto) =>
+    axiosClient
+      .post(`/auth/reset-password/${data.token}`, { password: data.password })
       .then((res) => res.data),
 };

@@ -4,12 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { authService } from "./auth.service";
 import {
+  ForgotPasswordSchema,
   LoginSchema,
   RegisterSchema,
+  ResetPasswordSchema,
+  type ForgotPasswordDto,
   type LoginDto,
   type RegisterDto,
+  type ResetPasswordDto,
 } from "./auth.schema";
 import { notifyError, notifySuccess } from "@/utils/notify";
+import { useParams } from "react-router-dom";
 
 const useRegister = () =>
   useMutation({
@@ -97,4 +102,60 @@ export const useResendVerifyEmail = (data: { email: string }) => {
     onSuccess: (data) => notifySuccess(data?.message ?? "Successfully sent"),
     onError: (error: unknown) => notifyError(error),
   });
+};
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationKey: ["auth/forgot-password"],
+    mutationFn: authService.forgotPassword,
+    onSuccess: (data) => notifySuccess(data?.message ?? "Successfully sent"),
+    onError: (error: unknown) => notifyError(error),
+  });
+};
+
+export const useForgotPasswordFacade = () => {
+  const { mutate, isPending, isSuccess } = useForgotPassword();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ForgotPasswordDto>({
+    resolver: zodResolver(ForgotPasswordSchema),
+  });
+
+  function submit(data: ForgotPasswordDto) {
+    mutate(data);
+  }
+
+  return { submit, isPending, register, handleSubmit, errors, isSuccess };
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationKey: ["auth/reset-password"],
+    mutationFn: authService.resetPassword,
+    onSuccess: (data) =>
+      notifySuccess(data?.message ?? "Password reset successfully"),
+    onError: (error: unknown) => notifyError(error),
+  });
+};
+
+export const useResetPasswordFacade = () => {
+  const { token } = useParams();
+  const { mutate, isPending, isSuccess } = useResetPassword();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ResetPasswordDto>({
+    resolver: zodResolver(ResetPasswordSchema),
+  });
+
+  function submit(data: ResetPasswordDto) {
+    mutate({ ...data, token: token ?? "" });
+  }
+
+  return { submit, isPending, register, handleSubmit, errors, isSuccess };
 };

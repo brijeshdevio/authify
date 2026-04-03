@@ -27,3 +27,23 @@ export const LoginSchema = z
   .strict();
 
 export type LoginDto = z.infer<typeof LoginSchema>;
+
+export const ForgotPasswordSchema = z
+  .object({
+    email: z.email("Invalid email address"),
+  })
+  .strict();
+
+export type ForgotPasswordDto = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z
+  .object({
+    token: z.string().min(1).optional(),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(30),
+  })
+  .strict();
+
+export type ResetPasswordDto = z.infer<typeof ResetPasswordSchema>;

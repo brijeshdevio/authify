@@ -37,7 +37,7 @@ export const resetPasswordTemplate = ({ token }: ResetPassword) => `
                 To reset your password, click the button below.
               </p>
               <p style="line-height:1.6;">
-                <a href="${env.FRONTEND}/auth/reset-password?token=${token}" style="background-color:#4f46e5; color:#ffffff; padding:10px 20px; display:block; text-decoration:none;width:fit-content;margin:10px auto;">Reset Password</a>
+                <a href="${env.FRONTEND}/auth/reset-password/${token}" style="background-color:#4f46e5; color:#ffffff; padding:10px 20px; display:block; text-decoration:none;width:fit-content;margin:10px auto;">Reset Password</a>
               </p>
               <p style="line-height:1.6;">
                 If you didn't request a password reset, you can safely ignore this email.
