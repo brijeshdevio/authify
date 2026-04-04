@@ -4,6 +4,7 @@ import { AuthService } from "./auth.service";
 import { apiResponse } from "../../utils/apiResponse";
 import { clearCookie, setCookie } from "../../lib/cookie";
 import { DeviceInfo } from "./auth.types";
+import { getIpAddress } from "../../utils/ipAddress";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -29,7 +30,7 @@ export class AuthController {
       type,
       deviceName,
       userAgent: req?.headers["user-agent"],
-      ipAddress: req?.ip,
+      ipAddress: getIpAddress(req),
     };
   };
 

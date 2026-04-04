@@ -6,6 +6,7 @@ import { UAParser } from "ua-parser-js";
 import { env } from "./config/env";
 import { routes } from "./routes";
 import { appErrorMiddleware } from "./middleware/appError.middleware";
+import { createRateLimiter } from "./middleware/rateLimiter.middleware";
 import { apiResponse } from "./utils/apiResponse";
 import { ERROR_CODES } from "./constants/errorCodes";
 
@@ -21,6 +22,13 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.set("trust proxy", 1);
+app.use(
+  createRateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 50,
+  }),
+);
 
 app.get("/", (req, res) => {
   const parser = new UAParser(req.headers["user-agent"]);
