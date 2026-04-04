@@ -34,9 +34,13 @@ app.get("/", (req, res) => {
   else if (device.type === "tablet") type = "tablet";
 
   const deviceName = `${os.name || "Unknown OS"} - ${browser.name || "Unknown Browser"}`;
-
+  const ip =
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
+    req.headers["x-real-ip"] ||
+    req.socket?.remoteAddress ||
+    null;
   res.json({
-    ipAddress: req.ip,
+    ipAddress: ip,
     userAgent: req.headers["user-agent"],
     deviceName,
     type,
