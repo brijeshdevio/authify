@@ -1,22 +1,24 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { userService } from "./user.service";
 import { useContext } from "react";
-import { AuthContext } from "@/app/Provider";
 import type { AxiosResponse } from "axios";
 import { notifyError, notifySuccess } from "@/utils/notify";
+import { protectService } from "./protect.service";
+import { AuthContext } from "@/app/provider/AuthProvider";
 import {
   ChangePasswordSchema,
   UpdateSchema,
   type ChangePasswordDto,
   type UpdateDto,
-} from "./user.schema";
+} from "./protect.schema";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useProfile() {
   return useQuery({
-    queryKey: ["users/me"],
-    queryFn: userService.profile,
+    queryKey: ["users", "me"],
+    queryFn: protectService.profile,
     select: (data: AxiosResponse["data"]) => {
       return {
         user: data.data,
@@ -36,8 +38,8 @@ export const useAuth = () => {
 
 export function useSessions() {
   return useQuery({
-    queryKey: ["users/sessions"],
-    queryFn: userService.sessions,
+    queryKey: ["users", "sessions"],
+    queryFn: protectService.sessions,
     select: (data: AxiosResponse["data"]) => {
       return {
         sessions: data.data,
@@ -49,10 +51,10 @@ export function useSessions() {
 }
 
 const useUpdate = () => {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: ["users/update"],
-    mutationFn: userService.update,
+    mutationKey: ["users", "update"],
+    mutationFn: protectService.update,
     onSuccess: (data) => {
       notifySuccess(data?.message ?? "Successfully updated");
       queryClient.invalidateQueries({ queryKey: ["users/me"] });
@@ -60,6 +62,7 @@ const useUpdate = () => {
     onError: (error: unknown) => notifyError(error),
   });
 };
+
 export const useUpdateFacade = () => {
   const { mutate, isPending } = useUpdate();
 
@@ -80,8 +83,8 @@ export const useUpdateFacade = () => {
 
 const useChangePassword = () => {
   return useMutation({
-    mutationKey: ["users/change-password"],
-    mutationFn: userService.changePassword,
+    mutationKey: ["users", "change-password"],
+    mutationFn: protectService.changePassword,
     onSuccess: (data) =>
       notifySuccess(data?.message ?? "Successfully password changed"),
     onError: (error: unknown) => notifyError(error),

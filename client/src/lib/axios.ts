@@ -54,7 +54,7 @@ axiosClient.interceptors.response.use(
         await axios.post(
           `${import.meta.env.VITE_API_URL}/auth/refresh`,
           {},
-          { withCredentials: true },
+          { withCredentials: true }
         );
 
         processQueue(null);
@@ -71,5 +71,5 @@ axiosClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );

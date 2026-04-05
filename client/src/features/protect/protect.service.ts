@@ -1,7 +1,7 @@
 import { axiosClient } from "@/lib/axios";
-import type { ChangePasswordDto, UpdateDto } from "./user.schema";
+import type { ChangePasswordDto, UpdateDto } from "./protect.schema";
 
-export const userService = {
+export const protectService = {
   profile: () => axiosClient.get("/users/me").then((res) => res.data),
   update: (data: UpdateDto) =>
     axiosClient.patch("/users/me", data).then((res) => res.data),

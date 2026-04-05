@@ -9,23 +9,21 @@ export const UpdateSchema = z
   })
   .strict();
 
-export type UpdateDto = z.infer<typeof UpdateSchema>;
-
 export const ChangePasswordSchema = z
   .object({
     oldPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
       .max(30, "Password must be at most 30 characters"),
 
     newPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
       .max(30, "Password must be at most 30 characters"),
 
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
       .max(30, "Password must be at most 30 characters"),
   })
   .superRefine((data, ctx) => {
@@ -49,4 +47,5 @@ export const ChangePasswordSchema = z
   })
   .strict();
 
+export type UpdateDto = z.infer<typeof UpdateSchema>;
 export type ChangePasswordDto = z.infer<typeof ChangePasswordSchema>;

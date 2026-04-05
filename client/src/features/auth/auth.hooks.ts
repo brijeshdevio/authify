@@ -18,7 +18,7 @@ import { useParams } from "react-router-dom";
 
 const useRegister = () =>
   useMutation({
-    mutationKey: ["auth/register"],
+    mutationKey: ["auth", "register"],
     mutationFn: authService.register,
     onSuccess: (data) =>
       notifySuccess(data?.message ?? "Successfully registered"),
@@ -54,13 +54,16 @@ export const useRegisterFacade = () => {
 
 const useLogin = () =>
   useMutation({
-    mutationKey: ["auth/login"],
+    mutationKey: ["auth", "login"],
     mutationFn: authService.login,
+    onSuccess: () => {
+      window.location.href = "/dashboard";
+    },
     onError: (error: unknown) => notifyError(error),
   });
 
 export const useLoginFacade = () => {
-  const { mutate, isPending, isSuccess } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const {
     handleSubmit,
@@ -74,22 +77,16 @@ export const useLoginFacade = () => {
     mutate(data);
   }
 
-  useEffect(() => {
-    if (isSuccess) {
-      window.location.href = "/dashboard";
-    }
-  }, [isSuccess]);
-
   return { submit, isPending, register, handleSubmit, errors };
 };
 
 export const useLogout = () => {
   return useMutation({
-    mutationKey: ["auth/logout"],
+    mutationKey: ["auth", "logout"],
     mutationFn: authService.logout,
     onSuccess: (data) => {
       notifySuccess(data?.message ?? "Successfully logged out");
-      window.location.href = "/auth/login";
+      window.location.href = "/login";
     },
     onError: (error: unknown) => notifyError(error),
   });
@@ -97,7 +94,7 @@ export const useLogout = () => {
 
 export const useResendVerifyEmail = (data: { email: string }) => {
   return useMutation({
-    mutationKey: ["auth/resend-verify-email"],
+    mutationKey: ["auth", "resend-verify-email"],
     mutationFn: () => authService.resendVerifyEmail(data),
     onSuccess: (data) => notifySuccess(data?.message ?? "Successfully sent"),
     onError: (error: unknown) => notifyError(error),
@@ -106,7 +103,7 @@ export const useResendVerifyEmail = (data: { email: string }) => {
 
 export const useForgotPassword = () => {
   return useMutation({
-    mutationKey: ["auth/forgot-password"],
+    mutationKey: ["auth", "forgot-password"],
     mutationFn: authService.forgotPassword,
     onSuccess: (data) => notifySuccess(data?.message ?? "Successfully sent"),
     onError: (error: unknown) => notifyError(error),
@@ -133,7 +130,7 @@ export const useForgotPasswordFacade = () => {
 
 export const useResetPassword = () => {
   return useMutation({
-    mutationKey: ["auth/reset-password"],
+    mutationKey: ["auth", "reset-password"],
     mutationFn: authService.resetPassword,
     onSuccess: (data) =>
       notifySuccess(data?.message ?? "Password reset successfully"),
@@ -162,7 +159,7 @@ export const useResetPasswordFacade = () => {
 
 export const useVerifyEmail = (token: string) => {
   return useMutation({
-    mutationKey: ["auth/verify-email"],
+    mutationKey: ["auth", "verify-email"],
     mutationFn: () => authService.verifyEmail(token),
     onSuccess: (data) => {
       notifySuccess(data?.message ?? "Email verified successfully");
