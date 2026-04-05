@@ -1,20 +1,26 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { AppRoutes } from "./AppRoutes";
-import { AuthProvider } from "./Provider";
-import "@/styles/App.css";
+import { AuthProvider } from "./provider/AuthProvider";
+import { AppRouter } from "./AppRouter";
 
-function App() {
-  const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+export function App() {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
       <Toaster />
-    </>
+    </QueryClientProvider>
   );
 }
 
