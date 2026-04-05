@@ -17,8 +17,11 @@ import {
   ResetPasswordDto,
 } from "./auth.schema";
 import { DeviceInfo } from "./auth.types";
-import { emailQueue } from "../../queues/email.queue";
+// import { emailQueue } from "../../queues/email.queue";
 import { JOBS } from "../../constants/queue";
+import { sendEmail } from "../../lib/mail";
+import { verificationTemplate } from "../../template/verification";
+import { resetPasswordTemplate } from "../../template/resetPassword";
 
 export const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$/y1jJS2H1+mZ1Sg77uvgAg$AYsdfipeVFRQxT2zXSCaw6581/ZdUV1I1MOjlng0fCM";
@@ -48,6 +51,50 @@ export class AuthService {
       },
     });
     return token;
+  }
+
+  private async sendVerificationEmail(email: string) {
+    const token = randomString(36);
+    const tokenHash = hashString(token);
+    const user = await prisma.user.update({
+      where: { email },
+      data: {
+        verificationTokens: {
+          create: {
+            tokenHash,
+            expiresAt: this.calculateExpiry(10 * 60 * 1000),
+            type: "EMAIL_VERIFY",
+          },
+        },
+      },
+    });
+    await sendEmail(
+      user.email,
+      "Verify Email",
+      verificationTemplate({ token }),
+    );
+  }
+
+  private async sendResetPasswordEmail(email: string) {
+    const token = randomString(36);
+    const tokenHash = hashString(token);
+    const user = await prisma.user.update({
+      where: { email },
+      data: {
+        verificationTokens: {
+          create: {
+            tokenHash,
+            expiresAt: this.calculateExpiry(10 * 60 * 1000),
+            type: "PASSWORD_RESET",
+          },
+        },
+      },
+    });
+    await sendEmail(
+      user.email,
+      "Reset Password",
+      resetPasswordTemplate({ token }),
+    );
   }
 
   private async createRefreshToken(sessionId: string) {
@@ -95,6 +142,7 @@ export class AuthService {
       where: { email, isVerified: false },
       select: {
         id: true,
+        email: true,
       },
     });
 
@@ -102,10 +150,7 @@ export class AuthService {
       throw new BadRequestException("Invalid email");
     }
 
-    await emailQueue.add(JOBS.SEND_VERIFICATION_EMAIL, {
-      userId: user?.id,
-      email,
-    });
+    await this.sendVerificationEmail(user.email);
   }
 
   async forgotPassword(email: string) {
@@ -117,10 +162,7 @@ export class AuthService {
       throw new BadRequestException("Invalid email");
     }
 
-    await emailQueue.add(JOBS.RESET_PASSWORD_EMAIL, {
-      userId: user?.id,
-      email,
-    });
+    await this.sendResetPasswordEmail(user.email);
   }
 
   async register(data: RegisterDto) {
@@ -138,10 +180,7 @@ export class AuthService {
           email: true,
         },
       });
-      await emailQueue.add(JOBS.SEND_VERIFICATION_EMAIL, {
-        userId: user?.id,
-        email: user?.email,
-      });
+      await this.sendVerificationEmail(data.email);
       return user;
     } catch (error) {
       if (
