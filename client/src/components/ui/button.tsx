@@ -3,7 +3,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
-import { Spinner } from "./spinner";
 import { Loader2Icon } from "lucide-react";
 
 const buttonVariants = cva(
@@ -40,7 +39,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 function ButtonC({

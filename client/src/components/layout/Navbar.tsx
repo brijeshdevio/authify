@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useLogout } from "@/features/auth/auth.hooks";
@@ -16,7 +16,7 @@ export function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
         <Link
           to="/"
-          className="text-xl font-bold tracking-tighter text-accent-foreground"
+          className="text-accent-foreground text-xl font-bold tracking-tighter"
         >
           Authify
         </Link>
