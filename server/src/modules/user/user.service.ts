@@ -19,6 +19,7 @@ export class UserService {
         email: true,
         role: true,
         createdAt: true,
+        isVerified: true,
       },
     });
     if (user) return user;
@@ -55,6 +56,9 @@ export class UserService {
         userAgent: true,
         expiresAt: true,
         createdAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     return sessions;
