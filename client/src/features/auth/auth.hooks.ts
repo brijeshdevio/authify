@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { authService } from "./auth.service";
 import {
   ForgotPasswordSchema,

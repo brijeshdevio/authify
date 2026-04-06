@@ -30,12 +30,12 @@ export default function Settings() {
                   <div className="group relative">
                     <img
                       alt="Avatar"
-                      className="h-24 w-24 rounded-xl object-cover ring-4 ring-primary/5"
+                      className="ring-primary/5 h-24 w-24 rounded-xl object-cover ring-4"
                       data-alt="Close up portrait of a professional man with a kind smile, neutral studio background, soft cinematic lighting"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPqmt5GpOyrHotbv7le0wfNXtdyo_TRpJ4CY86Z-vJOfFS0K7Spwn1DHxs4-IG4M620cd0jAMLeH8qSYubGFVvoputNHp52AZ8BBCrZoYpzwt1uy66aw_K6Tf5KNXC0FEUSB0BaIZTf8s5Dg4EgnrfcllqxO9L9H-R39YjFMUrKQ1Tp_O9_t836r6Y6p7uaFJjok0cE-EKI0vyDOcBNfKMZdKj03POkO9HA1ePkBmcvLowY2Gj43WH8dEEeOvRQIsu6E42wWSxS1s"
                     />
                     <button
-                      className="hover:text-primary-container absolute -right-2 -bottom-2 rounded-lg bg-white p-1.5 text-primary shadow-md transition-colors"
+                      className="hover:text-primary-container text-primary absolute -right-2 -bottom-2 rounded-lg bg-white p-1.5 shadow-md transition-colors"
                       type="button"
                     >
                       <span className="material-symbols-outlined text-sm">
@@ -70,7 +70,7 @@ export default function Settings() {
                       Full Name
                     </label>
                     <input
-                      className="bg-surface-container-lowest text-on-surface w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                      className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                       placeholder="e.g. Jane Doe"
                       type="text"
                       value="Alex Rivera"
@@ -81,7 +81,7 @@ export default function Settings() {
                       Email Address
                     </label>
                     <input
-                      className="bg-surface-container-lowest text-on-surface w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                      className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                       placeholder="email@example.com"
                       type="email"
                       value="alex.rivera@authify.com"
@@ -93,9 +93,8 @@ export default function Settings() {
                     Professional Bio
                   </label>
                   <textarea
-                    className="bg-surface-container-lowest text-on-surface w-full resize-none rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                    className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full resize-none rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                     placeholder="Write a short introduction about yourself..."
-                    rows="4"
                   >
                     Senior Product Designer based in San Francisco, focused on
                     building accessible and delightful digital experiences for
@@ -104,7 +103,7 @@ export default function Settings() {
                 </div>
                 <div className="flex justify-end pt-4">
                   <button
-                    className="to-primary-container rounded-lg bg-gradient-to-r from-primary px-8 py-3 text-sm font-semibold tracking-wider text-white uppercase shadow-md transition-all hover:shadow-lg active:scale-95"
+                    className="to-primary-container from-primary rounded-lg bg-gradient-to-r px-8 py-3 text-sm font-semibold tracking-wider text-white uppercase shadow-md transition-all hover:shadow-lg active:scale-95"
                     type="submit"
                   >
                     Save Changes
@@ -130,7 +129,7 @@ export default function Settings() {
                     Current Password
                   </label>
                   <input
-                    className="bg-surface-container-lowest text-on-surface w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                    className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                     placeholder="••••••••"
                     type="password"
                   />
@@ -140,7 +139,7 @@ export default function Settings() {
                     New Password
                   </label>
                   <input
-                    className="bg-surface-container-lowest text-on-surface w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                    className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                     placeholder="••••••••"
                     type="password"
                   />
@@ -153,7 +152,7 @@ export default function Settings() {
                     Confirm New Password
                   </label>
                   <input
-                    className="bg-surface-container-lowest text-on-surface w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20"
+                    className="bg-surface-container-lowest text-on-surface focus:ring-primary/20 w-full rounded-lg border-none px-4 py-3 text-sm shadow-sm transition-all focus:ring-2"
                     placeholder="••••••••"
                     type="password"
                   />
@@ -179,12 +178,12 @@ export default function Settings() {
                   </div>
                   <div className="relative inline-flex cursor-pointer items-center">
                     <div className="bg-primary-fixed-dim h-6 w-11 rounded-full"></div>
-                    <div className="absolute top-1 left-1 h-4 w-4 translate-x-5 rounded-full bg-primary transition-transform"></div>
+                    <div className="bg-primary absolute top-1 left-1 h-4 w-4 translate-x-5 rounded-full transition-transform"></div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="rounded-xl border border-primary/10 bg-primary/5 p-6">
+            <div className="border-primary/10 bg-primary/5 rounded-xl border p-6">
               <div className="flex gap-4">
                 <div className="h-fit rounded-lg bg-white p-2 shadow-sm">
                   <span className="material-symbols-outlined text-primary">
@@ -192,7 +191,7 @@ export default function Settings() {
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-primary">
+                  <h4 className="text-primary text-sm font-bold">
                     Trust Score: High
                   </h4>
                   <p className="text-on-surface-variant mt-1 text-xs">
